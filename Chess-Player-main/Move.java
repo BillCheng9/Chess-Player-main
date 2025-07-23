@@ -40,11 +40,21 @@ public class Move {
         return nm;
     }
 
+    public static long getPawnMoves(long myPawns, long sameOccupied, long otherOccupied, boolean whiteToMove){
+        long pawnMoves = 0L;
+        while (myPawns != 0L){
+            long pawn = Long.highestOneBit(myPawns);
+            pawnMoves |= getSPawnMoves(pawn, sameOccupied, otherOccupied, whiteToMove);
+            myPawns = (~pawn) & myPawns;
+        }
+        return pawnMoves;
+    }
+    
     // Method to get possible moves for a white pawn's capture
     public static long getWhitePawnCapture(long pawn, long otherOccupied){
         return (pawn << 7 | pawn << 9) & (otherOccupied); // shift pawn up diagonally as long as there is a black piece
     }
-
+    /*
     // Method to get possible moves for all white pawns
     public static long getWhitePawnMoves(long myPawns, long sameOccupied, long otherOccupied){
         long pawnMoves = 0L;
@@ -64,13 +74,13 @@ public class Move {
             myPawns = (~pawn) & myPawns;
         }
         return pawnMoves;
-    }
+    }*/
 
-    // Method to get possible moves for a black pawn's capture
+    //Method to get possible moves for a black pawn's capture
     public static long getBlackPawnCapture(long pawn, long sameOccupied, long otherOccupied){
         return (pawn >> 7 | pawn >> 9) & (otherOccupied); // shift pawn up diagonally as long as there is a black piece
     }
-
+    /*
     // Method to get possible moves for all black pawns
     public static long getBlackPawnMoves(long myPawns, long sameOccupied, long otherOccupied){
         long pawnMoves = 0L;
@@ -90,7 +100,7 @@ public class Move {
             myPawns = (~pawn) & myPawns;
         }
         return pawnMoves;
-    }
+    }*/
 
     // Method to get possible moves for all kings
     public static long getKingMoves(long k, long sameOccupied){
@@ -152,10 +162,8 @@ public class Move {
     }
 
     // Method to get possible moves for a single pawn
-    public static long getSPawnMoves(long wPawns, long sameOccupied, long otherOccupied, boolean whiteToMove){
-        long pawnMoves = 0L;
+    public static long getSPawnMoves(long pawn, long sameOccupied, long otherOccupied, boolean whiteToMove){
         long fPawnMoves;
-        long pawn = Long.highestOneBit(wPawns);
         if (whiteToMove) {
             long singleStep = pawn << 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up a rank
             long doubleStep = singleStep << 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up two ranks
@@ -166,25 +174,23 @@ public class Move {
                 fPawnMoves = singleStep | capture;
             }
         } else {
-            long singleStep = pawn >> 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up a rank
-            long doubleStep = singleStep >> 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up two ranks
-            long capture = (pawn >> 7 | pawn >> 9) & (otherOccupied); // shift pawn up diagonally as long as there is a black piece
+            long singleStep = pawn >> 8 & (~sameOccupied) & (~otherOccupied); // shift pawn down a rank
+            long doubleStep = singleStep >> 8 & (~sameOccupied) & (~otherOccupied); // shift pawn down two ranks
+            long capture = (pawn >> 7 | pawn >> 9) & (otherOccupied); // shift pawn down diagonally as long as there is a white piece
             if ((pawn & 0xFF000000000000L) != 0) { // if pawn is located on 7th rank
                 fPawnMoves = singleStep | doubleStep | capture;
             } else {
                 fPawnMoves = singleStep | capture;
             }
         }
-        int n_zero = Long.numberOfTrailingZeros(pawn);
-        if (n_zero%8 < 4) {
-            fPawnMoves &= (~sameOccupied)&(~FILE_AB);
+        int file = Long.numberOfTrailingZeros(pawn) % 8;
+        if (file < 2) {
+            fPawnMoves &= ~FILE_AB;  // Mask left wraparound
+        } else if (file > 5) {
+            fPawnMoves &= ~FILE_GH;  // Mask right wraparound
         }
-        else {
-            fPawnMoves &= (~sameOccupied)&(~FILE_GH);
-        }
-        pawnMoves |= fPawnMoves;
 
-        return pawnMoves;
+        return fPawnMoves;
     }
 
     // Method to get possible moves for a single king

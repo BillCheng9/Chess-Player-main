@@ -4,8 +4,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Main main = new Main();
-        main.testKnightMoves();
-        //main.testPawnMoves();
+        //main.testKnightMoves();
+        main.testPawnMoves();
         //main.testEvaluationFunction();
         //main.testKingMoves();
         //main.testBishopMoves();
@@ -48,7 +48,7 @@ public class Main {
 
     private void testPawnMoves() {
         // test pawn move generation
-        String pawnTestBoard = "rnbkqb1r/8/8/8/8/3N3n/PPPPPPP1/RNBKQB1R w KQkq - 0 1";
+        String pawnTestBoard = "rnbkqb1r/8/8/8/2N5/3N3n/P1P3P1/RNBKQB1R w KQkq - 0 1";
         ChessBoard chessBoardPawnTest = new ChessBoard(pawnTestBoard);
 
         long pawnTestWP = chessBoardPawnTest.getWP();
@@ -70,8 +70,7 @@ public class Main {
         System.out.println("\n" + "------ Test pawn moves ------" + "\n");
         ChessBoard.drawArray(pawnTestWP);
         System.out.println("");
-        Move move = new Move();
-        long WPM = move.getWhitePawnMoves(pawnTestWP, wPawnTest, bPawnTest);
+        long WPM = Move.getPawnMoves(pawnTestWP, wPawnTest, bPawnTest, true);
         ChessBoard.drawArray(WPM);
 
         System.out.println("");

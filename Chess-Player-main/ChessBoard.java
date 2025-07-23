@@ -539,7 +539,7 @@ public class ChessBoard {
                     || userMove.charAt(3) > '8' || userMove.charAt(3) < '0') {
                 System.out.println("Invalid Square");
             } else if ((startSquare & BP) != 0) {
-                if ((targetSquare & Move.getBlackPawnMoves(startSquare, playerPieces, computerPieces)) > 1) {
+                if ((targetSquare & Move.getPawnMoves(startSquare, playerPieces, computerPieces, false)) > 1) {
                     break;
                 } else {
                     System.out.println("Piece can't move there!");
@@ -751,7 +751,7 @@ public class ChessBoard {
         long otherOccupied = isWhite ? (BP | BN | BB | BR | BQ | BK) : (WP | WN | WB | WR | WQ | WK);
 
         // Calculate mobility for each piece
-        mobility += Long.bitCount(Move.getWhitePawnMoves(myPawns, sameOccupied, otherOccupied));
+        mobility += Long.bitCount(Move.getPawnMoves(myPawns, sameOccupied, otherOccupied, isWhite));
         mobility += Long.bitCount(Move.getKnightMoves(myKnights, sameOccupied))  * 1.5;
         mobility += Long.bitCount(Move.getBishopMoves(myBishops, sameOccupied, otherOccupied)) * 2;
         mobility += Long.bitCount(Move.getRookMoves(myRooks, sameOccupied, otherOccupied));
