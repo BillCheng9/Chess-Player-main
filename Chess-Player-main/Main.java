@@ -7,8 +7,8 @@ public class Main {
         //main.testKnightMoves();
         //main.testPawnMoves();
         //main.testEvaluationFunction();
-        main.testKingMoves();
-        //main.testBishopMoves();
+        //main.testKingMoves();
+        main.testBishopMoves();
         //main.testRookMoves();
         //main.testQueenMoves();
         //main.testAttackedByFunction();

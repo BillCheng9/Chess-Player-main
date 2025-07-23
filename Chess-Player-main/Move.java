@@ -65,7 +65,7 @@ public class Move {
         long bm = 0L;
         while(b!=0L){
             long m = Long.highestOneBit(b);
-            long fbm = getSBishopMoves(b, sameOccupied, otherOccupied);
+            long fbm = getSBishopMoves(m, sameOccupied, otherOccupied);
             bm |= fbm;
             b = (~m) & b;
         }
@@ -154,15 +154,12 @@ public class Move {
 
     // Method to get possible moves for a single bishop
     public static Long getSBishopMoves(long b,long sameOccupied, long otherOccupied) {
-        long bm = 0L;
-        long m = Long.highestOneBit(b);
-        int s = Long.numberOfTrailingZeros(m);
+        int s = Long.numberOfTrailingZeros(b);
         long o = sameOccupied | otherOccupied;
-        long possibilitiesDiagonal = (((o&DiagonalMasks[(s / 8) + (s % 8)]) - (2 * m)) ^ Long.reverse(Long.reverse(o&DiagonalMasks[(s / 8) + (s % 8)]) - (2 * Long.reverse(m))))&DiagonalMasks[(s / 8) + (s % 8)];
-        long possibilitiesAntiDiagonal = (((o&AntiDiagonalMasks[(s / 8) + 7 - (s % 8)]) - (2 * m)) ^ Long.reverse(Long.reverse(o&AntiDiagonalMasks[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(m))))&AntiDiagonalMasks[(s / 8) + 7 - (s % 8)];
+        long possibilitiesDiagonal = (((o&DiagonalMasks[(s / 8) + (s % 8)]) - (2 * b)) ^ Long.reverse(Long.reverse(o&DiagonalMasks[(s / 8) + (s % 8)]) - (2 * Long.reverse(b))))&DiagonalMasks[(s / 8) + (s % 8)];
+        long possibilitiesAntiDiagonal = (((o&AntiDiagonalMasks[(s / 8) + 7 - (s % 8)]) - (2 * b)) ^ Long.reverse(Long.reverse(o&AntiDiagonalMasks[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(b))))&AntiDiagonalMasks[(s / 8) + 7 - (s % 8)];
         long fbm = (possibilitiesDiagonal)&~sameOccupied | (possibilitiesAntiDiagonal)&~sameOccupied; // exclude the white pieces
-        bm |= fbm;
-        return bm;
+        return fbm;
     }
 
     // Method to get possible moves for a single rook
