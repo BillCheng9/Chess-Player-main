@@ -8,7 +8,7 @@ public class Main {
         //main.testPawnMoves();
         //main.testEvaluationFunction();
         //main.testKingMoves();
-        main.testBishopMoves();
+        //main.testBishopMoves();
         //main.testRookMoves();
         //main.testQueenMoves();
         //main.testAttackedByFunction();

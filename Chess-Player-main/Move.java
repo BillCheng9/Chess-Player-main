@@ -77,7 +77,7 @@ public class Move {
         long rm = 0L;
         while(r!=0L){
             long m = Long.highestOneBit(r);
-            long frm = getSRookMoves(r, sameOccupied, otherOccupied);
+            long frm = getSRookMoves(m, sameOccupied, otherOccupied);
             rm |= frm;
             r = (~m) & r;
         }
@@ -164,24 +164,19 @@ public class Move {
 
     // Method to get possible moves for a single rook
     public static Long getSRookMoves(long r,long sameOccupied, long otherOccupied) {
-        long rm = 0L;
-        long m = Long.highestOneBit(r);
-        int s = Long.numberOfTrailingZeros(m);
+        int s = Long.numberOfTrailingZeros(r);
         long o = sameOccupied | otherOccupied;
-        long possibilitiesHorizontal = ((o - 2 * m) ^ Long.reverse(Long.reverse(o) - 2 * Long.reverse(m)))&RankMasks[(s / 8)];
-        long possibilitiesVertical = (((o&FileMasks[s % 8]) - (2 * m)) ^ Long.reverse(Long.reverse(o&FileMasks[s % 8]) - (2 * Long.reverse(m))))&FileMasks[(s % 8)];
+        long possibilitiesHorizontal = ((o - 2 * r) ^ Long.reverse(Long.reverse(o) - 2 * Long.reverse(r)))&RankMasks[(s / 8)];
+        long possibilitiesVertical = (((o&FileMasks[s % 8]) - (2 * r)) ^ Long.reverse(Long.reverse(o&FileMasks[s % 8]) - (2 * Long.reverse(r))))&FileMasks[(s % 8)];
         long frm = (possibilitiesHorizontal)&~sameOccupied | (possibilitiesVertical)&~sameOccupied; // exclude the white pieces
-        rm |= frm;
-        return rm;
+        return frm;
     }
 
     // Method to get possible moves for a single queen
     public static Long getSQueenMoves(long q,long sameOccupied, long otherOccupied) {
-        long qm = 0L;
         long fqm = getSRookMoves(q, sameOccupied, otherOccupied) | getSBishopMoves(q,sameOccupied, otherOccupied);
-        qm |= fqm;
 
-        return qm;
+        return fqm;
     }
 
     /**
