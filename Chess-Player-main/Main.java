@@ -5,9 +5,9 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main();
         //main.testKnightMoves();
-        main.testPawnMoves();
+        //main.testPawnMoves();
         //main.testEvaluationFunction();
-        //main.testKingMoves();
+        main.testKingMoves();
         //main.testBishopMoves();
         //main.testRookMoves();
         //main.testQueenMoves();
@@ -94,7 +94,7 @@ public class Main {
 
     private void testKingMoves() {
         System.out.println("-------Test King moves-------" + "\n");
-        String kboard = "rnbqkbnr/pppppppp/8/8/3N4/8/3P1p2/4K3 w KQkq - 0 1";
+        String kboard = "8/2r5/8/8/8/8/8/3K4 w KQkq - 0 1";
         ChessBoard kchessBoard = new ChessBoard(kboard);
         long KWP = kchessBoard.getWP();
         long KWN = kchessBoard.getWN();
@@ -113,9 +113,11 @@ public class Main {
         long bKTest = KBP | KBN | KBB | KBR | KBQ | KBK;
 
         System.out.println("White king position");
-        ChessBoard.drawArray(KWK);
+        ChessBoard.drawArray(bKTest);
         System.out.println("White king moves");
-        long WKkM = Move.getKingMoves(KWK, wKTest);
+        long WKkM = Move.getSKingMoves(KWK, wKTest);
+        long attacked = Move.getBlackPawnCapture(KBP, bKTest, wKTest) | Move.getKnightMoves(KBN, bKTest) | Move.getRookMoves(KBR, bKTest, wKTest) | Move.getBishopMoves(KBB, bKTest, wKTest) | Move.getQueenMoves(KBQ, bKTest, wKTest) | Move.getSKingMoves(KBK, bKTest);
+        WKkM &= ~attacked; // remove attacked squares
         ChessBoard.drawArray(WKkM);
     }
 

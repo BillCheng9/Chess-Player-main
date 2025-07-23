@@ -531,8 +531,8 @@ public class ChessBoard {
             startSquare = 1L << (startRank * 8 + startFile);
             targetSquare = 1L << (endRank * 8 + endFile);
 
-            long playerPieces = BP | BR | BB | BK | BN | BQ;
-            long computerPieces = WP | WR | WB | WK | WN | WQ;
+            long computerPieces = BP | BR | BB | BK | BN | BQ;
+            long playerPieces = WP | WR | WB | WK | WN | WQ;
             if (userMove.charAt(0) > 'h' || userMove.charAt(0) < 'a'
                     || userMove.charAt(1) > '8' || userMove.charAt(1) < '0'
                     || userMove.charAt(2) > 'h' || userMove.charAt(2) < 'a'
@@ -563,7 +563,8 @@ public class ChessBoard {
                     System.out.println("Piece can't move there!");
                 }
             } else if ((startSquare & BK) != 0) {
-                if ((targetSquare & Move.getSKingMoves(startSquare, playerPieces)) > 1) {
+                long attacked = Move.getBlackPawnCapture(BP, computerPieces, playerPieces) | Move.getKnightMoves(BN, computerPieces) | Move.getRookMoves(BR, computerPieces, playerPieces) | Move.getBishopMoves(BB, computerPieces, playerPieces) | Move.getQueenMoves(BQ, computerPieces, playerPieces) | Move.getSKingMoves(BK, computerPieces);
+                if ((targetSquare & Move.getSKingMoves(startSquare, playerPieces) & ~attacked ) > 1) {
                     break;
                 } else {
                     System.out.println("Piece can't move there!");

@@ -54,64 +54,10 @@ public class Move {
     public static long getWhitePawnCapture(long pawn, long otherOccupied){
         return (pawn << 7 | pawn << 9) & (otherOccupied); // shift pawn up diagonally as long as there is a black piece
     }
-    /*
-    // Method to get possible moves for all white pawns
-    public static long getWhitePawnMoves(long myPawns, long sameOccupied, long otherOccupied){
-        long pawnMoves = 0L;
-        long fPawnMoves;
-        while (myPawns != 0L){
-            long pawn = Long.highestOneBit(myPawns);
-            long singleStep  = pawn << 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up a rank
-            long doubleStep = singleStep << 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up two ranks
-            long capture = Move.getWhitePawnCapture(pawn, otherOccupied); // shift pawn up diagonally
-            if (pawn <= 32768) { // if pawn is located on first rank
-                fPawnMoves = singleStep | doubleStep | capture;
-            }
-            else {
-                fPawnMoves = singleStep | capture;
-            }
-            pawnMoves |= fPawnMoves;
-            myPawns = (~pawn) & myPawns;
-        }
-        return pawnMoves;
-    }*/
 
     //Method to get possible moves for a black pawn's capture
     public static long getBlackPawnCapture(long pawn, long sameOccupied, long otherOccupied){
         return (pawn >> 7 | pawn >> 9) & (otherOccupied); // shift pawn up diagonally as long as there is a black piece
-    }
-    /*
-    // Method to get possible moves for all black pawns
-    public static long getBlackPawnMoves(long myPawns, long sameOccupied, long otherOccupied){
-        long pawnMoves = 0L;
-        long fPawnMoves;
-        while (myPawns != 0L){
-            long pawn = Long.highestOneBit(myPawns);
-            long singleStep = pawn >> 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up a rank
-            long doubleStep = singleStep >> 8 & (~sameOccupied) & (~otherOccupied); // shift pawn up two ranks
-            long capture = Move.getBlackPawnCapture(pawn, sameOccupied, otherOccupied); // shift pawn up diagonally as long as there is a black piece
-            if (pawn > 140737488355328L) { // if pawn is located on first rank
-                fPawnMoves = singleStep | doubleStep | capture;
-            }
-            else {
-                fPawnMoves = singleStep | capture;
-            }
-            pawnMoves |= fPawnMoves;
-            myPawns = (~pawn) & myPawns;
-        }
-        return pawnMoves;
-    }*/
-
-    // Method to get possible moves for all kings
-    public static long getKingMoves(long k, long sameOccupied){
-        long km = 0L;
-        while(k!=0L){
-            long m = Long.highestOneBit(k);
-            long fkm = getSKingMoves(k, sameOccupied);
-            km |= fkm;
-            k = (~m) & k;
-        }
-        return km;
     }
 
     // Method to get possible moves for all bishops
@@ -195,19 +141,15 @@ public class Move {
 
     // Method to get possible moves for a single king
     public static long getSKingMoves(long k, long sameOccupied){
-        long km = 0L;
-        long m = Long.highestOneBit(k);
-        long fkm = (m << 1 | m << 7 | m << 8 | m << 9 | m >> 1 | m >> 7 | m >> 8 | m >> 9 );
-        int n_zero = Long.numberOfTrailingZeros(m);
-        if (n_zero % 8 < 4) {
-            fkm &= (~sameOccupied)&(~FILE_AB);
+        long fkm = (k << 1 | k << 7 | k << 8 | k << 9 | k >> 1 | k >> 7 | k >> 8 | k >> 9 );
+        int file = Long.numberOfTrailingZeros(k) % 8;
+        if (file < 2) {
+            fkm &= ~FILE_AB;  // Mask left wraparound
+        } else if (file > 5) {
+            fkm &= ~FILE_GH;  // Mask right wraparound
         }
-        else {
-            fkm &= (~sameOccupied)&(~FILE_GH);
-        }
-        km |= fkm;
 
-        return km;
+        return fkm;
     }
 
     // Method to get possible moves for a single bishop
